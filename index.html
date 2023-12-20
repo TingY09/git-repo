@@ -1,114 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>台灣空屋分布系統</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
   </head>
   <body>
-    <nav>
-        <ul>
-            <li><a href="file:///C:/Users/Ye/Desktop/html/html/index.html">首頁</a>
-            <li><a href="file:///C:/Users/Ye/Desktop/html/html/distribution.html">分布圖</a>
-            <li><a href="#">趨勢圖</a>
-            <ul>
-                <li><a href="file:///C:/Users/Ye/Desktop/html/html/trendnorth.html">北部</a>
-                <li><a href="file:///C:/Users/Ye/Desktop/html/html/trendmid.html">中部</a>
-                <li><a href="file:///C:/Users/Ye/Desktop/html/html/trendsouth.html">南部</a>
-                <li><a href="file:///C:/Users/Ye/Desktop/html/html/trendeast.html">東部</a>
-                <li><a href="file:///C:/Users/Ye/Desktop/html/html/trendfj.html">福建省</a>
-                </li>
-            </ul>
-            </li>
-        </li>
-        </ul>
-        </nav>
-        
-        
-        <div align="center" style="position:relative;top:10px;color:#FFF;font-size: 25px;">
-            <h1>臺灣空屋分佈系統</h1>
-            <input type ="button" onclick="javascript:location.href='file:///C:/Users/Ye/Desktop/html/html/distribution.html'" value="分佈圖" style="color:#FFF;width:150px;height:50px;font-size:36px;background-color:#0f7315;"></input>
-            <input type ="button" onclick="javascript:location.href='file:///C:/Users/Ye/Desktop/html/html/trendnorth.html'" value="趨勢圖" style="color:#FFF;width:150px;height:50px;font-size:36px;background-color:#0f7315;"></input>
-        </div>
-        <style>
+  <!-- 1. 網頁畫面編排-->
+  <div id="container">
+    <h1>空氣品質狀況</h1>
+    <p>目前空氣品質:<span id=air-quality">N/A</span></p>
+    <button id="update-button">更新數值</button>
+  </div>
+  <script>
+    // 2. 進行OPENDATA資料獲取
+    const airQualityElement = document.getElementById("air-quality");
+    const updateButton      = document.getElementById("update-button");
 
-            nav {/*整個上方區塊*/
-            color: #F00;
-            min-width: 100%;
-            margin:0px;
-            background-color: #0f7315;
-            }
-            
-            nav ul {/*第一層選單區域*/
-            padding: 0;
-            margin: 0;
-            list-style: none;
-            position: relative;
-            margin:0px;
-            }
-            
-            nav ul li {/*第一層選單項目*/
-            display: inline-block;
-            float: none;
-            white-space: nowrap;
-            }
-            
-            nav ul li a {/*最上層選單樣式*/
-            display: block;
-            padding: 0 10px;
-            color: #eee;
-            font-size: 20px;
-            line-height: 30px;
-            text-decoration: none;
-            background-color: #0f7315;
-            }
-            
-            nav ul li ul a {/*第一層子選單樣式*/
-            background-color: #045071;
-            }
-            
-            nav ul li ul li ul a {/*第二層子選單樣式*/
-            background-color: #0097D8;
-            }
-            
-            nav a:hover {/*整個選單連結滑鼠移上去時的樣式*/
-            color: #FFF;
-            background-color: #555;
-            transition: all .2s ease;
-            }
-            
-            nav ul ul {/*第一層子選單展開*/
-            position: absolute;
-            transition-property: transform;
-            transition-duration: 10ms;
-            transition-timing-function: ease-in;
-            transition-delay: 10ms;
-            transform: scale(1,0);
-            transform-origin: top center;
-            }
-            
-            
-            
-            nav ul li:hover>ul {/*選單滑鼠移上去的樣式變化*/
-            /*display: inherit;*/
-            transition: all 100ms ease;
-            transform: scale(1,1);
-            }
-            
-            nav ul ul li {/*第一層子選單的樣式*/
-            min-width: 170px;
-            display: list-item;
-            position: relative;
-            }
-            
-            nav ul ul ul {/*第二層子選單的區塊樣式*/
-            position: absolute;
-            top: 0;
-            left: 100%;
-            }
-            body{
-    background-color :#98AFC7
-   }
-        </style>
+    // 函數用於獲取API數值並更新HTML頁面
+    function updateAirQuality(){
+      airQualityElement.textContent = "更新中";
+      // 在這裡執行API請求，獲取最新的空氣品質
+      fetch("https://data.moenv.gov.tw/api/v2/aqx_p_242?language=zh&api_key=c756761f-b277-420c-9ae3-bd6a4389f225")
+      .then(responce => response.json())
+      .then(data => {
+        //從API數據中提取空氣品質數值
+        const airQualityValue = data.records[0].concentration;
+        //更新HTML頁面上的數值
+        airQualityElement.textContent = airQualityValue;
+      })
+      .catch(error => {
+        console.log(error);
+        console.error("無法獲取API數據：" + error);
+      })
+    }
+
+    // 3. 建立監聽器使網頁可透過按鈕更新數值
+
+    //添加按鈕點擊事件監聽器，當按鈕被點即時更新空氣品質
+    updateButton.addEventListener("click", updateAirQuality);
+
+    // 初始更新一次空氣品質
+    updateAirQuality();
+  </script>
 
   </body>
 </html>
